@@ -1,0 +1,363 @@
+html<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CanadaTariffHub - Tariff Info + Government Programs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #333; }
+        .navbar { background: linear-gradient(135deg, #c41e3a 0%, #ff6b35 100%); color: white; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 100; }
+        .navbar h1 { font-size: 1.8em; margin-bottom: 5px; }
+        .navbar p { font-size: 0.95em; opacity: 0.9; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .hero { background: linear-gradient(135deg, #c41e3a 0%, #ff6b35 100%); color: white; padding: 50px 30px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
+        .hero h2 { font-size: 2.2em; margin-bottom: 10px; }
+        .hero p { font-size: 1.05em; opacity: 0.95; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 24px; background: white; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.95em; }
+        .tab-btn:hover { border-color: #c41e3a; }
+        .tab-btn.active { background: #c41e3a; color: white; border-color: #c41e3a; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .section { background: white; padding: 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .section h3 { color: #c41e3a; margin-bottom: 20px; font-size: 1.4em; border-bottom: 3px solid #ff6b35; padding-bottom: 10px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        input, select, textarea { padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95em; font-family: inherit; transition: all 0.3s; width: 100%; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #c41e3a; box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1); }
+        button { padding: 12px 20px; background: #c41e3a; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.95em; width: 100%; }
+        button:hover { background: #a01630; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(196, 30, 58, 0.3); }
+        .results { margin-top: 20px; display: none; }
+        .results.active { display: block; }
+        .result-card { background: #f8f9fa; padding: 20px; border-left: 5px solid #c41e3a; margin-bottom: 15px; border-radius: 6px; }
+        .result-card h4 { color: #c41e3a; margin-bottom: 10px; font-size: 1.1em; }
+        .hs-code { font-family: 'Courier New', monospace; background: #e8eef7; padding: 6px 10px; border-radius: 4px; color: #1e40af; font-weight: 600; display: inline-block; margin: 8px 0; }
+        .rate-box { background: #fff3cd; padding: 12px; border-radius: 6px; margin: 10px 0; border-left: 4px solid #ffc107; }
+        .rate-box strong { color: #856404; }
+        .program-card { background: #e8f4f8; padding: 20px; border-left: 5px solid #0b7ba7; margin-bottom: 15px; border-radius: 6px; }
+        .program-card h4 { color: #0b7ba7; margin-bottom: 8px; }
+        .program-card .amount { background: #0b7ba7; color: white; display: inline-block; padding: 4px 12px; border-radius: 4px; font-weight: 600; font-size: 0.9em; margin-bottom: 8px; }
+        .program-card p { color: #555; line-height: 1.5; font-size: 0.95em; margin-bottom: 8px; }
+        .match-score { display: inline-block; background: #d4edda; color: #155724; padding: 6px 12px; border-radius: 4px; font-weight: 600; font-size: 0.9em; }
+        .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin-bottom: 20px; border-radius: 6px; }
+        .info-box strong { color: #1976d2; }
+        .no-results { text-align: center; padding: 40px; background: #f9f9f9; border-radius: 8px; color: #999; }
+        .action-plan { background: #f0f7ff; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ff6b35; }
+        .action-plan h4 { color: #c41e3a; margin-bottom: 15px; }
+        .action-step { margin-bottom: 12px; padding: 10px; background: white; border-radius: 4px; }
+        .action-step strong { color: #c41e3a; }
+        @media (max-width: 768px) { .hero h2 { font-size: 1.6em; } .tabs { flex-direction: column; } .tab-btn { width: 100%; } .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🍁 CanadaTariffHub</h1>
+        <p>Find tariff codes, government programs, and action plans in ONE place</p>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h2>Your Complete Tariff & Support Solution</h2>
+            <p>Search tariff codes + Find government programs + Get action plans</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tariff')">🔍 Tariff Finder</button>
+            <button class="tab-btn" onclick="switchTab('programs')">💰 Find Programs</button>
+            <button class="tab-btn" onclick="switchTab('plan')">📋 My Complete Plan</button>
+        </div>
+
+        <!-- TAB 1: TARIFF FINDER -->
+        <div id="tariff" class="tab-content active">
+            <div class="section">
+                <h3>🔍 Find Tariff Codes & Rates</h3>
+                
+                <div class="info-box">
+                    <strong>💡 How it works:</strong> Select your product category, describe your product in plain English, and we'll find the HS code and tariff rates.
+                </div>
+
+                <div class="form-grid">
+                    <select id="tariffCategory" onchange="updateProducts()">
+                        <option value="">-- Select Product Category --</option>
+                        <option value="animals">Animals & Meat (Ch. 1-5)</option>
+                        <option value="food">Food & Beverages (Ch. 16-24)</option>
+                        <option value="steel">Steel & Metals (Ch. 72-83)</option>
+                        <option value="vehicles">Vehicles & Auto Parts (Ch. 87)</option>
+                        <option value="machinery">Machinery & Equipment (Ch. 84-85)</option>
+                        <option value="chemicals">Chemicals (Ch. 28-38)</option>
+                        <option value="textiles">Textiles & Apparel (Ch. 50-63)</option>
+                    </select>
+
+                    <select id="tariffProduct">
+                        <option value="">-- Select Specific Product --</option>
+                    </select>
+                </div>
+
+                <button onclick="findTariff()" style="margin-bottom: 20px;">🔍 Find Tariff Code & Rate</button>
+
+                <div id="tariffResults" class="results"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: FIND PROGRAMS -->
+        <div id="programs" class="tab-content">
+            <div class="section">
+                <h3>💰 Find Government Programs You Qualify For</h3>
+
+                <div class="info-box">
+                    <strong>💡 How it works:</strong> Select your province and what you need, we'll show government programs you qualify for.
+                </div>
+
+                <div class="form-grid">
+                    <select id="progProvince">
+                        <option value="">-- Select Province --</option>
+                        <option value="ON">Ontario</option>
+                        <option value="QC">Quebec</option>
+                        <option value="BC">British Columbia</option>
+                    </select>
+
+                    <select id="progNeed">
+                        <option value="">-- What Do You Need? --</option>
+                        <option value="financing">Emergency Financing</option>
+                        <option value="grants">Grants (Non-Repayable)</option>
+                        <option value="export">Export Market Support</option>
+                    </select>
+                </div>
+
+                <button onclick="findPrograms()" style="margin-bottom: 20px;">💰 Find Programs</button>
+
+                <div id="programResults" class="results"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: MY COMPLETE PLAN -->
+        <div id="plan" class="tab-content">
+            <div class="section">
+                <h3>📋 Your Complete Tariff & Support Plan</h3>
+
+                <div class="form-grid">
+                    <input type="text" id="companyName" placeholder="Company Name">
+                    <select id="compProvince">
+                        <option value="">Province</option>
+                        <option value="ON">Ontario</option>
+                        <option value="QC">Quebec</option>
+                        <option value="BC">British Columbia</option>
+                    </select>
+                    <select id="compIndustry">
+                        <option value="">Industry</option>
+                        <option value="steel">Steel</option>
+                        <option value="auto">Automotive</option>
+                        <option value="food">Food</option>
+                        <option value="textiles">Textiles</option>
+                    </select>
+                </div>
+
+                <div class="form-grid">
+                    <input type="number" id="annualImports" placeholder="Annual US imports ($)" min="0">
+                    <input type="number" id="employees" placeholder="Number of employees" min="0">
+                    <input type="number" id="margin" placeholder="Profit margin (%)" min="0" max="100">
+                </div>
+
+                <button onclick="generatePlan()" style="margin-bottom: 20px;">📋 Generate My Complete Plan</button>
+
+                <div id="planResults" class="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tariffDatabase = {
+            animals: [
+                { name: 'Fresh Beef', code: '0201', us: '10%', usmca: '0%' },
+                { name: 'Fresh Pork', code: '0203', us: '10%', usmca: '0%' }
+            ],
+            food: [
+                { name: 'Prepared Bread', code: '1905', us: '10%', usmca: '0%' },
+                { name: 'Chocolate', code: '1806', us: '10-15%', usmca: '0%' }
+            ],
+            steel: [
+                { name: 'Steel Flat-Rolled', code: '7208', us: '25%', usmca: '0%' },
+                { name: 'Steel Articles', code: '7326', us: '20%', usmca: '0%' }
+            ],
+            vehicles: [
+                { name: 'Motor Vehicles', code: '8704', us: '25%', usmca: '0%' },
+                { name: 'Auto Parts', code: '8708', us: '10-25%', usmca: '0%' }
+            ],
+            machinery: [
+                { name: 'Diesel Engines', code: '8408', us: '2.5%', usmca: '0%' },
+                { name: 'Industrial Valves', code: '8481', us: '3-5%', usmca: '0%' }
+            ],
+            chemicals: [
+                { name: 'Inorganic Chemicals', code: '2905', us: '5%', usmca: '0%' },
+                { name: 'Organic Compounds', code: '2915', us: '5%', usmca: '0%' }
+            ],
+            textiles: [
+                { name: "Women's Apparel", code: '6204', us: '15%', usmca: '0%' },
+                { name: "Men's Apparel", code: '6203', us: '15%', usmca: '0%' }
+            ]
+        };
+
+        const programDatabase = {
+            ON: {
+                financing: [
+                    { name: 'BDC Tariff Impact Loan', amount: '$5M', desc: 'Emergency financing for tariff-impacted businesses' }
+                ],
+                grants: [
+                    { name: 'RTRI (Regional Tariff Response Initiative)', amount: '$1M', desc: 'Non-repayable grants for Ontario businesses' }
+                ],
+                export: [
+                    { name: 'CanExport SME Grants', amount: '$75K', desc: 'Export market development support' }
+                ]
+            },
+            QC: {
+                financing: [
+                    { name: 'BDC Tariff Impact Loan', amount: '$5M', desc: 'Emergency financing' }
+                ],
+                grants: [
+                    { name: 'Québec Export Program', amount: '$50K', desc: 'Support for Quebec manufacturers' }
+                ]
+            },
+            BC: {
+                financing: [
+                    { name: 'BDC Tariff Impact Loan', amount: '$5M', desc: 'Emergency financing' }
+                ],
+                export: [
+                    { name: 'BC Export Acceleration', amount: '$100K', desc: 'Support for new export markets' }
+                ]
+            }
+        };
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateProducts() {
+            const category = document.getElementById('tariffCategory').value;
+            const select = document.getElementById('tariffProduct');
+            select.innerHTML = '<option value="">-- Select Specific Product --</option>';
+            if (category && tariffDatabase[category]) {
+                tariffDatabase[category].forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = JSON.stringify(p);
+                    opt.textContent = p.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        function findTariff() {
+            const category = document.getElementById('tariffCategory').value;
+            const productStr = document.getElementById('tariffProduct').value;
+            if (!category || !productStr) {
+                alert('Please select both category and product');
+                return;
+            }
+            const product = JSON.parse(productStr);
+            const resultsDiv = document.getElementById('tariffResults');
+            resultsDiv.innerHTML = `
+                <div class="result-card">
+                    <h4>${product.name}</h4>
+                    <div>HS Code: <span class="hs-code">${product.code}</span></div>
+                    <div class="rate-box">
+                        <strong>Current US Tariff Rate:</strong> ${product.us}<br>
+                        <strong>USMCA Rate (if qualified):</strong> ${product.usmca}
+                    </div>
+                    <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                        💡 If you import this product from the US, you could face tariffs of ${product.us}. If USMCA applies, you pay ${product.usmca}.
+                    </p>
+                </div>
+            `;
+            resultsDiv.classList.add('active');
+        }
+
+        function findPrograms() {
+            const province = document.getElementById('progProvince').value;
+            const need = document.getElementById('progNeed').value;
+            if (!province || !need) {
+                alert('Please select province and what you need');
+                return;
+            }
+            const resultsDiv = document.getElementById('programResults');
+            const programs = programDatabase[province][need] || [];
+            let html = '';
+            if (programs.length > 0) {
+                programs.forEach(prog => {
+                    html += `
+                        <div class="program-card">
+                            <h4>${prog.name}</h4>
+                            <div class="amount">${prog.amount}</div>
+                            <p>${prog.desc}</p>
+                            <span class="match-score">✓ You Likely Qualify</span>
+                        </div>
+                    `;
+                });
+            } else {
+                html = '<div class="no-results">No programs found for this combination.</div>';
+            }
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.add('active');
+        }
+
+        function generatePlan() {
+            const company = document.getElementById('companyName').value;
+            const province = document.getElementById('compProvince').value;
+            const industry = document.getElementById('compIndustry').value;
+            const imports = parseFloat(document.getElementById('annualImports').value);
+            const employees = document.getElementById('employees').value;
+            const margin = parseFloat(document.getElementById('margin').value);
+            
+            if (!company || !province || !industry || !imports || !employees || !margin) {
+                alert('Please complete all fields');
+                return;
+            }
+
+            let tariffRate = 0.15;
+            if (industry === 'steel') tariffRate = 0.25;
+            if (industry === 'auto') tariffRate = 0.20;
+
+            const tariffCost = imports * tariffRate;
+            const currentProfit = imports * (margin / 100);
+            const profitAfter = currentProfit - tariffCost;
+            const impactPercent = ((profitAfter - currentProfit) / currentProfit * 100).toFixed(1);
+
+            let programs = [];
+            if (employees !== '250+') {
+                programs.push({ name: 'RTRI Grants', amount: '$1M' });
+                programs.push({ name: 'CanExport SME', amount: '$75K' });
+            }
+            if (imports > 500000) {
+                programs.push({ name: 'BDC Tariff Loan', amount: '$5M' });
+            }
+
+            let html = `
+                <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">📊 Your Tariff Impact Summary</h4>
+                    <p><strong>Company:</strong> ${company}</p>
+                    <p><strong>Annual US Imports:</strong> $${imports.toLocaleString('en-US', {maximumFractionDigits: 0})}</p>
+                    <p><strong>Estimated Tariff Cost (${(tariffRate*100).toFixed(0)}%):</strong> <span style="color: #dc2626; font-size: 1.1em; font-weight: 600;">$${tariffCost.toLocaleString('en-US', {maximumFractionDigits: 0})} per year</span></p>
+                    <p><strong>Impact on Profit:</strong> <span style="color: #dc2626; font-weight: 600;">${impactPercent}%</span></p>
+                </div>
+
+                <div class="action-plan">
+                    <h4>🎯 Your Action Plan</h4>
+                    <div class="action-step"><strong>Step 1: Immediate (This Week)</strong><br>• Budget: $${tariffCost.toLocaleString('en-US', {maximumFractionDigits: 0})} to accommodate tariff costs</div>
+                    <div class="action-step"><strong>Step 2: Short Term (1-3 months)</strong><br>• Identify alternative suppliers (Canada, Mexico, Asia)</div>
+                    <div class="action-step"><strong>Step 3: Medium Term (3-6 months)</strong><br>• Execute funding applications to BDC, EDC, provincial programs</div>
+                    <div class="action-step"><strong>Step 4: Long Term (6+ months)</strong><br>• Monitor tariff policy changes</div>
+                </div>
+
+                <div style="background: #e8f8e8; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h4 style="color: #2d5f2e; margin-bottom: 15px;">💰 Programs You Qualify For:</h4>
+                    ${programs.map(p => `<div style="padding: 10px; background: white; border-radius: 4px; margin-bottom: 10px;"><strong>${p.name}</strong> - ${p.amount}</div>`).join('')}
+                </div>
+            `;
+            
+            document.getElementById('planResults').innerHTML = html;
+            document.getElementById('planResults').classList.add('active');
+        }
+    </script>
+</body>
+</html>
